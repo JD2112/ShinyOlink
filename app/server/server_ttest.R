@@ -13,7 +13,7 @@ ttest_server <- function(input, output, session, merged_data, ttest_results) {
           data_for_test[[input$ttest_var]] <- as.factor(data_for_test[[input$ttest_var]])
         } else {
           data_for_test[[input$ttest_var]] <- as.character(data_for_test[[input$ttest_var]])
-        }
+        } 
         
         print("Running olink_ttest function")
         results <- olink_ttest(data_for_test, variable = input$ttest_var)

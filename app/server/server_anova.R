@@ -1,11 +1,33 @@
 anova_server <- function(input, output, session, merged_data, anova_results) {
+  
+  # Reactive value to store covariate data
+  covariate_data <- reactiveVal(list())
+  
   output$covariate_inputs <- renderUI({
     req(input$num_covariates)
     num_covariates <- as.numeric(input$num_covariates)
+    
     lapply(1:num_covariates, function(i) {
-      selectInput(paste0("covariate", i), paste("Select Covariate", i), 
-                  choices = c("None", colnames(merged_data())))
+      tagList(
+        selectInput(paste0("covariate", i), paste("Select Covariate", i), 
+                    choices = c("None", colnames(merged_data()))),
+        radioButtons(paste0("covariate_type", i), paste("Covariate", i, "Type"),
+                     choices = c("Character", "Factor", "Numeric"))
+      )
     })
+  })
+  
+  # Observer to update covariate_data when inputs change
+  observe({
+    req(input$num_covariates)
+    num_covariates <- as.numeric(input$num_covariates)
+    new_covariate_data <- lapply(1:num_covariates, function(i) {
+      list(
+        name = input[[paste0("covariate", i)]] %||% "None",
+        type = input[[paste0("covariate_type", i)]] %||% "Character"
+      )
+    })
+    covariate_data(new_covariate_data)
   })
   
   observeEvent(input$run_anova, {
@@ -13,17 +35,25 @@ anova_server <- function(input, output, session, merged_data, anova_results) {
       req(merged_data(), input$anova_var)
       data_for_test <- merged_data()
       
-      if (input$anova_var_type == "Factor") {
-        data_for_test[[input$anova_var]] <- as.factor(data_for_test[[input$anova_var]])
-      } else {
-        data_for_test[[input$anova_var]] <- as.character(data_for_test[[input$anova_var]])
-      }
+      # Process main ANOVA variable
+      data_for_test[[input$anova_var]] <- switch(input$anova_var_type,
+        "Factor" = as.factor(data_for_test[[input$anova_var]]),
+        "Numeric" = as.numeric(data_for_test[[input$anova_var]]),
+        as.character(data_for_test[[input$anova_var]])
+      )
       
       covariates <- c()
-      for(i in 1:as.numeric(input$num_covariates)) {
-        cov <- input[[paste0("covariate", i)]]
-        if(!is.null(cov) && cov != "None") {
-          covariates <- c(covariates, cov)
+      covariate_types <- c()
+      for(cov in covariate_data()) {
+        if(!is.null(cov$name) && cov$name != "None") {
+          covariates <- c(covariates, cov$name)
+          covariate_types <- c(covariate_types, cov$type)
+          # Process covariate
+          data_for_test[[cov$name]] <- switch(cov$type,
+            "Factor" = as.factor(data_for_test[[cov$name]]),
+            "Numeric" = as.numeric(data_for_test[[cov$name]]),
+            as.character(data_for_test[[cov$name]])
+          )
         }
       }
       
@@ -38,7 +68,9 @@ anova_server <- function(input, output, session, merged_data, anova_results) {
         results = results,
         model_details = list(
           variable = input$anova_var,
-          covariates = covariates
+          variable_type = input$anova_var_type,
+          covariates = covariates,
+          covariate_types = covariate_types
         )
       ))
       

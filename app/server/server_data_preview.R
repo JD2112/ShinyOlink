@@ -1,4 +1,4 @@
-data_preview_server <- function(input, output, session, merged_data) {
+data_preview_server <- function(input, output, session, merged_data, var_key_merged) {
   output$data_preview <- renderDT({
     req(merged_data())
     datatable(merged_data(),
@@ -33,6 +33,16 @@ data_preview_server <- function(input, output, session, merged_data) {
     },
     content = function(file) {
       write.csv(merged_data(), file, row.names = FALSE)
+    }
+  )
+
+  output$download_var_key_data <- downloadHandler(
+    filename = function() {
+      paste("var_key_merged_", Sys.Date(), ".csv", sep="")
+    },
+    content = function(file) {
+      req(var_key_merged())
+      write.csv(var_key_merged(), file, row.names = FALSE)
     }
   )
 }

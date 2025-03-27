@@ -9,6 +9,10 @@ library(writexl)
 library(lme4)
 library(lmerTest)
 library(shinyjs)
+library(DT)
+
+# Source utility functions
+source("utilities.R")
 
 # Source all your existing modules
 source("ui/ui_main.R")
@@ -17,6 +21,10 @@ source("server/server_main.R")
 # Source the new start page modules
 source("ui/ui_startpage.R")
 source("server/server_startpage.R")
+
+# Source the data input and preview modules
+source("ui/ui_data_input.R")
+source("ui/ui_data_preview.R")
 
 # Define the main UI
 ui <- fluidPage(
@@ -28,6 +36,11 @@ ui <- fluidPage(
 
 # Define the main server
 server <- function(input, output, session) {
+  # Reactive values to store the merged data and var-key merged data
+  merged_data <- reactiveVal(NULL)
+  var_key_merged <- reactiveVal(NULL)
+  ttest_results <- reactiveVal(NULL)
+  
   # Reactive value to store the current page
   current_page <- reactiveVal("start")
   
@@ -69,14 +82,14 @@ server <- function(input, output, session) {
         }
         .radio-buttons-center .shiny-options-group {
           width: auto;
-          padding-left: 80px; /* Add space on the left */
+          padding-left: 80px;
         }
         .radio-buttons-center .radio {
           text-align: left;
         }
         .radio-buttons-center .radio label {
-          font-size: 18px; /* Make the text bigger */
-          padding: 5px 0; /* Add some vertical padding */
+          font-size: 18px;
+          padding: 5px 0;
         }
       "))
     } else {
@@ -105,9 +118,61 @@ server <- function(input, output, session) {
     print(paste("Current page changed to:", current_page()))
     if (current_page() == "main") {
       print("Calling server_main function")
-      server_main(input, output, session)
+      server_main(input, output, session, merged_data, var_key_merged, ttest_results)
     }
   })
+  
+  # Add the new merge functionality
+  observeEvent(input$merge_var_key, {
+  req(input$var_file, input$key_file)
+  
+  tryCatch({
+    var_data <- safe_read_csv(input$var_file$datapath)
+    key_data <- safe_read_csv(input$key_file$datapath)
+    
+    print("Var data dimensions:")
+    print(dim(var_data))
+    print("Key data dimensions:")
+    print(dim(key_data))
+    
+    var_data <- var_data %>% distinct(SUBJID, .keep_all = TRUE)
+    key_data <- key_data %>% distinct(SampleID, .keep_all = TRUE)
+    
+    if("SUBJID" %in% colnames(var_data)) {
+      var_data$SUBJID <- gsub("\n", "", var_data$SUBJID)
+    }
+    
+    print("Columns in var_data:")
+    print(colnames(var_data))
+    print("Columns in key_data:")
+    print(colnames(key_data))
+    
+    if (!"SUBJID" %in% colnames(var_data) || !"SampleID" %in% colnames(key_data)) {
+      stop("Required columns 'SUBJID' or 'SampleID' are missing")
+    }
+    
+    merged <- var_data %>% left_join(key_data, by = c("SUBJID" = "SampleID"))
+    var_key_merged(merged)
+    
+    print("Merged data dimensions:")
+    print(dim(merged))
+    
+    show_success("Var and Key data merged successfully")
+  }, error = function(e) {
+    handle_error(paste("Error merging data:", e$message))
+  })
+})
+  
+  # Add the new download handler
+  output$download_var_key_data <- downloadHandler(
+    filename = function() {
+      paste("var_key_merged_", Sys.Date(), ".csv", sep="")
+    },
+    content = function(file) {
+      req(var_key_merged())
+      write.csv(var_key_merged(), file, row.names = FALSE)
+    }
+  )
 }
 
 shinyApp(ui, server)
