@@ -39,6 +39,7 @@ ui <- fluidPage(
 
 # Define the main server
 server <- function(input, output, session) {
+  options(shiny.maxRequestSize = 1000000 * 1024^2)
   # Reactive values to store the merged data and var-key merged data
   merged_data <- reactiveVal(NULL)
   var_key_merged <- reactiveVal(NULL)

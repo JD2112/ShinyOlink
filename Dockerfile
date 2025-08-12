@@ -74,8 +74,12 @@ RUN R -e "\
     library(enrichplot); \
     library(broom); \
     library(purrr); \
+    library(jsonlite); \
     sessionInfo(); \
     installed.packages()"
+
+RUN mkdir -p /srv/shiny-server/app_cache && \
+    chown -R shiny:shiny /srv/shiny-server/app_cache
 
 # Copy app files
 COPY app/ /srv/shiny-server/
