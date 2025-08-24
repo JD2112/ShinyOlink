@@ -44,13 +44,18 @@ single_ui <- function() {
           display: flex;
           flex-direction: column;
           min-height: 100vh;
+          background-image: url('https://laboratorytalk.com/files/assets/image/3017/microarray.gif');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-attachment: fixed;
         }
         .footer {
           position: relative;
           bottom: 0;
           left: 0;
           right: 0;
-          background-color: #f8f9fa;
+          background-color:rgb(212, 233, 252);
           padding: 10px 0;
         }
         .footer-content {
@@ -143,7 +148,7 @@ single_ui <- function() {
     ),
     
     tags$footer(
-      class = "footer mt-auto py-3 bg-light",
+      class = "footer mt-auto",
       div(
         class = "container footer-content",
         div(
@@ -156,7 +161,7 @@ single_ui <- function() {
         ),
         div(
           class = "footer-section footer-right",
-          "Version 1.2.4"
+          "Version 1.3"
         )
       )
     )
