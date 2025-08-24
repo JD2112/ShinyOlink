@@ -1,0 +1,747 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A Shiny app for Olink data analysis">
+      
+      
+        <meta name="author" content="Jyotirmoy Das">
+      
+      
+        <link rel="canonical" href="https://jd2112.github.io/ShinyOlink/1.3/chapter6/">
+      
+      
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.17">
+    
+    
+      
+        <title>Chapter 6: Reactive Programming - olinkWrapper</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CFira+Code:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"Fira Code"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../styles/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#chapter-6-reactive-programming" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="olinkWrapper" class="md-header__button md-logo" aria-label="olinkWrapper" data-md-component="logo">
+      
+
+<a href="https://github.com/JD2112" target="_blank" style="display:flex; align-items:center; text-decoration:none;">
+  <img src="../images/JD_logo.png" alt="Logo" style="height:24px; margin-right:8px;">
+</a>
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            olinkWrapper
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Chapter 6: Reactive Programming
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/JD2112/ShinyOlink" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../chapter1/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Manual
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../chapter2/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Olink Proteomics
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../chapter3/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Technical Background
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../chapter4/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  FAQs
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="olinkWrapper" class="md-nav__button md-logo" aria-label="olinkWrapper" data-md-component="logo">
+      
+
+<a href="https://github.com/JD2112" target="_blank" style="display:flex; align-items:center; text-decoration:none;">
+  <img src="../images/JD_logo.png" alt="Logo" style="height:24px; margin-right:8px;">
+</a>
+    </a>
+    olinkWrapper
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/JD2112/ShinyOlink" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+  
+  <li class="md-nav__item">
+    
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+    
+    
+    
+  </li>
+
+  
+  <li class="md-nav__item">
+    
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Manual
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+    
+    
+    
+  </li>
+
+  
+  <li class="md-nav__item">
+    
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Olink Proteomics
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+    
+    
+    
+  </li>
+
+  
+  <li class="md-nav__item">
+    
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Technical Background
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+    
+    
+    
+  </li>
+
+  
+  <li class="md-nav__item">
+    
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    FAQs
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+    
+    
+    
+  </li>
+
+
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/JD2112/ShinyOlink/edit/master/docs/chapter6.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="chapter-6-reactive-programming">Chapter 6: Reactive Programming<a class="headerlink" href="#chapter-6-reactive-programming" title="Permanent link">&para;</a></h1>
+<p>Welcome back, <code>ShinyOlink</code> enthusiast! In <a href="../chapter5/">Chapter 5: Module-Based Development</a>, we learned how <code>ShinyOlink</code> organizes its code into smaller, reusable "LEGO bricks" called modules. This modular design helps keep the code tidy and makes the application easier to manage.</p>
+<p>But how do these individual "bricks" communicate with each other? How does a change you make in one part of the app (like uploading data) automatically affect another part (like updating the list of variables you can analyze)? This is where <strong>Reactive Programming</strong> comes in!</p>
+<h2 id="what-is-reactive-programming">What is "Reactive Programming"?<a class="headerlink" href="#what-is-reactive-programming" title="Permanent link">&para;</a></h2>
+<p>Imagine you're working with a spreadsheet. When you change a number in one cell, all the formulas in other cells that depend on that number automatically recalculate and update their results. You don't have to tell each formula to re-run; they just <em>react</em> to the change.</p>
+<p><strong>The main problem Reactive Programming solves is this:</strong> How do we make a web application feel "alive" and responsive, so that when a user does something (like clicking a button or typing text), other parts of the application automatically update without the user having to refresh the page or manually trigger every single change?</p>
+<p>In <code>ShinyOlink</code>, reactive programming is the magic that allows the app to respond dynamically to your actions. For example:</p>
+<ul>
+<li>When you <strong>upload your data</strong> and click "Merge Data" (from <a href="../chapter1/">Chapter 1: Data Ingestion &amp; Preparation</a>), <code>ShinyOlink</code> automatically updates the dropdown menus in all the analysis modules (like T-Test or ANOVA) with the new column names from your merged dataset.</li>
+<li>When you <strong>run a T-Test</strong> (from <a href="../chapter2/">Chapter 2: Statistical Analysis &amp; Visualization Modules</a>), the app automatically makes those results available, and the Volcano Plot module then knows exactly which data to use to draw the plot.</li>
+</ul>
+<p>This makes the <code>ShinyOlink</code> app seamless and intuitive, just like that responsive spreadsheet.</p>
+<h2 id="key-concepts-the-brains-connections">Key Concepts: The Brain's Connections<a class="headerlink" href="#key-concepts-the-brains-connections" title="Permanent link">&para;</a></h2>
+<p>Shiny applications are built on this idea of "reactivity." This means that when certain pieces of information (inputs) change, other pieces of the application that depend on them (outputs or calculations) automatically update. Two fundamental tools make this happen:</p>
+<h3 id="1-reactiveval-the-dynamic-whiteboard">1. <code>reactiveVal</code>: The Dynamic Whiteboard<a class="headerlink" href="#1-reactiveval-the-dynamic-whiteboard" title="Permanent link">&para;</a></h3>
+<p><code>reactiveVal</code> is a special type of variable in Shiny that can <strong>store data that changes over time</strong>. Think of it like a <strong>shared whiteboard</strong> that different parts of the app can read from and write to. When someone writes new information on this whiteboard, everyone else who is "watching" it automatically knows there's an update.</p>
+<ul>
+<li><strong>Purpose:</strong> To hold dynamic data that needs to be shared and updated across different parts of your Shiny app.</li>
+<li><strong>Analogy:</strong> A "sticky note" or a shared "whiteboard" where the app stores important, changing information, like your <code>merged_data</code> or the <code>ttest_results</code>.</li>
+<li><strong>Example in <code>ShinyOlink</code>:</strong><ul>
+<li><code>merged_data</code>: This <code>reactiveVal</code> holds your combined Olink dataset after you upload and merge your files.</li>
+<li><code>ttest_results</code>: This <code>reactiveVal</code> stores the statistical results generated by the T-Test module.</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-observeevent-the-smart-listener">2. <code>observeEvent</code>: The Smart Listener<a class="headerlink" href="#2-observeevent-the-smart-listener" title="Permanent link">&para;</a></h3>
+<p><code>observeEvent</code> is a special function that <strong>listens for specific actions or changes</strong> and then runs a block of code in response. It's like having a dedicated sensor that only triggers when something particular happens.</p>
+<ul>
+<li><strong>Purpose:</strong> To run code only when a specific "event" occurs (e.g., a button is clicked, or a <code>reactiveVal</code> changes its value).</li>
+<li><strong>Analogy:</strong> A "sensor" or "alarm" that goes off only when you press a specific button, or when someone updates a specific whiteboard (<code>reactiveVal</code>).</li>
+<li><strong>Example in <code>ShinyOlink</code>:</strong><ul>
+<li><code>observeEvent(input$merge_data, {...})</code>: This listens for you to click the "Merge Data" button. When you click it, the code inside the curly braces runs to merge your data.</li>
+<li><code>observeEvent(input$run_ttest, {...})</code>: This listens for you to click the "Run T-Test" button. When clicked, it runs the code to perform the T-test calculation.</li>
+</ul>
+</li>
+</ul>
+<h3 id="how-they-work-together">How They Work Together<a class="headerlink" href="#how-they-work-together" title="Permanent link">&para;</a></h3>
+<p><code>observeEvent</code> often works with <code>reactiveVal</code>. An <code>observeEvent</code> might trigger when a button is clicked, and then the code it runs might <em>update</em> a <code>reactiveVal</code>. Other parts of the app, in turn, can <em>read</em> from that <code>reactiveVal</code> to perform their own actions, automatically reacting to the change. This creates a chain of reactions throughout the app.</p>
+<h2 id="how-shinyolink-uses-reactive-programming">How <code>ShinyOlink</code> Uses Reactive Programming<a class="headerlink" href="#how-shinyolink-uses-reactive-programming" title="Permanent link">&para;</a></h2>
+<p>Let's trace our familiar examples to see reactive programming in action.</p>
+<h3 id="scenario-1-data-upload-variable-updates">Scenario 1: Data Upload -&gt; Variable Updates<a class="headerlink" href="#scenario-1-data-upload-variable-updates" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>You upload your NPX and Variables files</strong> and click the "Merge Data" button.</li>
+<li>The <code>ShinyOlink</code> app uses an <code>observeEvent</code> to detect this button click.</li>
+<li>Inside that <code>observeEvent</code>, the app reads your files, performs the merging, and then <strong>updates the <code>merged_data</code> <code>reactiveVal</code></strong> with your new, combined dataset.</li>
+<li>Crucially, other parts of the app that rely on <code>merged_data</code> automatically "notice" this change. For instance, the dropdown menus in the T-Test, ANOVA, and PCA modules, which need to show the column names from your data, automatically update to display the new columns from your freshly merged <code>merged_data</code>. You don't have to click a "refresh variables" button!</li>
+</ol>
+<h3 id="scenario-2-t-test-results-volcano-plot-readiness">Scenario 2: T-Test Results -&gt; Volcano Plot Readiness<a class="headerlink" href="#scenario-2-t-test-results-volcano-plot-readiness" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>You click the "Run T-Test" button</strong> in the T-Test module.</li>
+<li>An <code>observeEvent</code> detects this click.</li>
+<li>The T-Test calculations are performed using your <code>merged_data</code>. The results (p-values, fold changes) are then <strong>stored in the <code>ttest_results</code> <code>reactiveVal</code></strong>.</li>
+<li>Now, when you go to the Volcano Plot module and click "Generate Volcano Plot," it immediately <strong>reads from the <code>ttest_results</code> <code>reactiveVal</code></strong> to get the latest statistical output. The Volcano Plot doesn't need to re-run the T-test; it just uses the ready-made results, ensuring efficiency and consistency.</li>
+</ol>
+<p>This continuous flow of information, where changes in one place automatically trigger updates in others, is the essence of reactive programming in Shiny.</p>
+<h2 id="under-the-hood-the-automatic-chain-reaction">Under the Hood: The Automatic Chain Reaction<a class="headerlink" href="#under-the-hood-the-automatic-chain-reaction" title="Permanent link">&para;</a></h2>
+<p>Let's look at a simplified walkthrough of how these reactive elements connect behind the scenes.</p>
+<h3 id="step-by-step-walkthrough">Step-by-Step Walkthrough<a class="headerlink" href="#step-by-step-walkthrough" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>You Interact:</strong> You click the "Merge Data" button in the <code>ShinyOlink</code> User Interface (UI).</li>
+<li><strong>Event Detected:</strong> The <code>ShinyOlink</code> Server's <code>observeEvent</code> listening for <code>input$merge_data</code> detects your click and begins its associated code.</li>
+<li><strong>Data Updated:</strong> This code performs the file merging and then updates the <code>merged_data</code> <code>reactiveVal</code> with the new dataset.</li>
+<li><strong>Dependencies React:</strong> Any part of the app (including <code>updateSelectInput</code> calls that refresh dropdown choices) that uses <code>merged_data()</code> automatically <em>reacts</em> to this change and updates itself.</li>
+<li><strong>You Interact Again:</strong> You then select a grouping variable in the T-Test module and click "Run T-Test."</li>
+<li><strong>Event Detected:</strong> The <code>observeEvent</code> listening for <code>input$run_ttest</code> in the T-Test module detects this click.</li>
+<li><strong>Calculations Performed:</strong> This code uses the <em>current</em> <code>merged_data()</code> (which it automatically gets from the <code>reactiveVal</code>) to perform the T-test calculation.</li>
+<li><strong>Results Updated:</strong> The T-test results are then saved into the <code>ttest_results</code> <code>reactiveVal</code>.</li>
+<li><strong>Dependencies React:</strong> The Volcano Plot module, which is set up to use <code>ttest_results()</code>, now knows that fresh T-test results are available and is ready to generate the plot.</li>
+</ol>
+<p>Here's a simple diagram to visualize this reactive flow:</p>
+<pre class="mermaid"><code>sequenceDiagram
+    participant User
+    participant Shiny App (UI)
+    participant Shiny App (Server)
+    participant merged_data (reactiveVal)
+    participant ttest_results (reactiveVal)
+
+    User-&gt;&gt;Shiny App (UI): 1. Clicks "Merge Data"
+    Shiny App (UI)-&gt;&gt;Shiny App (Server): 2. Sends input$merge_data signal
+    Shiny App (Server)-&gt;&gt;Shiny App (Server): 3. observeEvent(input$merge_data) triggers
+    Shiny App (Server)-&gt;&gt;merged_data: 4. merged_data(new_dataset)
+    Note over Shiny App (Server): 5. Other parts (e.g., dropdowns) automatically update
+    Shiny App (Server)--&gt;&gt;Shiny App (UI): 6. Updates variable dropdowns in UI
+
+    User-&gt;&gt;Shiny App (UI): 7. Clicks "Run T-Test"
+    Shiny App (UI)-&gt;&gt;Shiny App (Server): 8. Sends input$run_ttest signal
+    Shiny App (Server)-&gt;&gt;Shiny App (Server): 9. observeEvent(input$run_ttest) triggers (uses merged_data())
+    Shiny App (Server)-&gt;&gt;ttest_results: 10. ttest_results(new_results)
+    Note over Shiny App (Server): 11. Volcano Plot module knows new results are ready
+    Shiny App (Server)--&gt;&gt;Shiny App (UI): 12. Displays T-Test table, enables plot generation</code></pre>
+<h3 id="diving-into-the-code-reactive-components">Diving into the Code: Reactive Components<a class="headerlink" href="#diving-into-the-code-reactive-components" title="Permanent link">&para;</a></h3>
+<p>Let's look at simplified code snippets showing how <code>reactiveVal</code> and <code>observeEvent</code> are used.</p>
+<p>First, in <code>app/app.R</code>, you declare your main <code>reactiveVal</code> containers. Think of this as setting up your whiteboards for the app:</p>
+<p><div class="highlight"><pre><span></span><code><span class="c1"># app/app.R (Simplified)</span>
+<span class="c1"># ... (other code) ...</span>
+
+<span class="n">server</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="kr">function</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="n">output</span><span class="p">,</span><span class="w"> </span><span class="n">session</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1"># These are our dynamic whiteboards (reactiveVal containers)</span>
+<span class="w">  </span><span class="n">merged_data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">reactiveVal</span><span class="p">(</span><span class="kc">NULL</span><span class="p">)</span><span class="w"> </span><span class="c1"># Starts empty</span>
+<span class="w">  </span><span class="n">ttest_results</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">reactiveVal</span><span class="p">(</span><span class="kc">NULL</span><span class="p">)</span><span class="w"> </span><span class="c1"># Starts empty</span>
+
+<span class="w">  </span><span class="c1"># ... (more server logic) ...</span>
+<span class="p">}</span>
+</code></pre></div>
+<strong>Explanation:</strong> <code>merged_data &lt;- reactiveVal(NULL)</code> creates a special container named <code>merged_data</code> that can hold data, and it starts with nothing inside (<code>NULL</code>). The same applies to <code>ttest_results</code>. These <code>reactiveVal</code>s are passed around to different modules so they can share information.</p>
+<p>Next, in <code>app/server/server_data_input.R</code>, you see how <code>merged_data</code> is updated after file merging:</p>
+<p><div class="highlight"><pre><span></span><code><span class="c1"># app/server/server_data_input.R (Simplified)</span>
+<span class="n">data_input_server</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="kr">function</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="n">output</span><span class="p">,</span><span class="w"> </span><span class="n">session</span><span class="p">,</span><span class="w"> </span><span class="n">merged_data</span><span class="p">,</span><span class="w"> </span><span class="n">var_key_merged</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nf">observeEvent</span><span class="p">(</span><span class="n">input</span><span class="o">$</span><span class="n">merge_data</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1"># This is our &quot;smart listener&quot; for the button click</span>
+<span class="w">    </span><span class="nf">req</span><span class="p">(</span><span class="n">input</span><span class="o">$</span><span class="n">npx_file</span><span class="p">,</span><span class="w"> </span><span class="n">input</span><span class="o">$</span><span class="n">var_file</span><span class="p">)</span><span class="w"> </span><span class="c1"># Makes sure files are uploaded</span>
+
+<span class="w">    </span><span class="c1"># ... (code to read and merge files into a &#39;merged&#39; variable) ...</span>
+
+<span class="w">    </span><span class="nf">merged_data</span><span class="p">(</span><span class="n">merged</span><span class="p">)</span><span class="w"> </span><span class="c1"># WRITE to the &#39;merged_data&#39; reactiveVal whiteboard!</span>
+
+<span class="w">    </span><span class="c1"># These lines automatically update dropdowns because merged_data changed</span>
+<span class="w">    </span><span class="nf">updateSelectInput</span><span class="p">(</span><span class="n">session</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;pca_var&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">choices</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">colnames</span><span class="p">(</span><span class="n">merged</span><span class="p">))</span>
+<span class="w">    </span><span class="nf">updateSelectInput</span><span class="p">(</span><span class="n">session</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;ttest_var&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">choices</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">colnames</span><span class="p">(</span><span class="n">merged</span><span class="p">))</span>
+<span class="w">    </span><span class="c1"># ... (more updates) ...</span>
+<span class="w">  </span><span class="p">})</span>
+<span class="p">}</span>
+</code></pre></div>
+<strong>Explanation:</strong> The <code>observeEvent(input$merge_data, {...})</code> waits for the "Merge Data" button click. Once clicked, the code inside runs. <code>merged_data(merged)</code> is the key line: it <em>writes</em> the newly combined <code>merged</code> dataset onto the <code>merged_data</code> whiteboard. Because this whiteboard was updated, other inputs like <code>updateSelectInput</code> (which dynamically updates the options in dropdown menus) automatically react and display the new column names found in <code>merged_data</code>.</p>
+<p>Now, in <code>app/server/server_ttest.R</code>, you see how <code>ttest_results</code> is updated:</p>
+<p><div class="highlight"><pre><span></span><code><span class="c1"># app/server/server_ttest.R (Simplified)</span>
+<span class="n">ttest_server</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="kr">function</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="n">output</span><span class="p">,</span><span class="w"> </span><span class="n">session</span><span class="p">,</span><span class="w"> </span><span class="n">merged_data</span><span class="p">,</span><span class="w"> </span><span class="n">ttest_results</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nf">observeEvent</span><span class="p">(</span><span class="n">input</span><span class="o">$</span><span class="n">run_ttest</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1"># Listener for the T-Test button</span>
+<span class="w">    </span><span class="nf">req</span><span class="p">(</span><span class="nf">merged_data</span><span class="p">(),</span><span class="w"> </span><span class="n">input</span><span class="o">$</span><span class="n">ttest_var</span><span class="p">)</span><span class="w"> </span><span class="c1"># Requires merged_data to be available</span>
+
+<span class="w">    </span><span class="n">data_for_test</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">merged_data</span><span class="p">()</span><span class="w"> </span><span class="c1"># READ from the &#39;merged_data&#39; reactiveVal whiteboard!</span>
+
+<span class="w">    </span><span class="c1"># ... (code to prepare data for test) ...</span>
+
+<span class="w">    </span><span class="n">results</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">olink_ttest</span><span class="p">(</span><span class="n">data_for_test</span><span class="p">,</span><span class="w"> </span><span class="n">variable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">input</span><span class="o">$</span><span class="n">ttest_var</span><span class="p">)</span>
+
+<span class="w">    </span><span class="nf">ttest_results</span><span class="p">(</span><span class="n">results</span><span class="p">)</span><span class="w"> </span><span class="c1"># WRITE to the &#39;ttest_results&#39; reactiveVal whiteboard!</span>
+
+<span class="w">    </span><span class="c1"># ... (code to display results table) ...</span>
+<span class="w">  </span><span class="p">})</span>
+<span class="p">}</span>
+</code></pre></div>
+<strong>Explanation:</strong> <code>observeEvent(input$run_ttest, {...})</code> listens for the "Run T-Test" button. <code>data_for_test &lt;- merged_data()</code> <em>reads</em> the latest combined dataset from the <code>merged_data</code> whiteboard. After the <code>olink_ttest</code> function calculates the results, <code>ttest_results(results)</code> <em>writes</em> these new results onto the <code>ttest_results</code> whiteboard, making them available to other modules, like the Volcano Plot.</p>
+<p>Finally, in <code>app/server/server_volcano_plot.R</code>, the Volcano Plot module simply <em>reads</em> the T-Test results:</p>
+<p><div class="highlight"><pre><span></span><code><span class="c1"># app/server/server_volcano_plot.R (Simplified)</span>
+<span class="n">volcano_plot_server</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="kr">function</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="n">output</span><span class="p">,</span><span class="w"> </span><span class="n">session</span><span class="p">,</span><span class="w"> </span><span class="n">merged_data</span><span class="p">,</span><span class="w"> </span><span class="n">ttest_results</span><span class="p">,</span><span class="w"> </span><span class="n">anova_results</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nf">observeEvent</span><span class="p">(</span><span class="n">input</span><span class="o">$</span><span class="n">run_volcano</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1"># Listener for &quot;Generate Volcano Plot&quot;</span>
+<span class="w">    </span><span class="kr">if</span><span class="w"> </span><span class="p">(</span><span class="n">input</span><span class="o">$</span><span class="n">volcano_plot_type</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;ttest&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nf">req</span><span class="p">(</span><span class="nf">ttest_results</span><span class="p">())</span><span class="w"> </span><span class="c1"># Makes sure T-Test results exist on the whiteboard</span>
+<span class="w">      </span><span class="n">results</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">ttest_results</span><span class="p">()</span><span class="w"> </span><span class="c1"># READ from the &#39;ttest_results&#39; reactiveVal whiteboard!</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="kr">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1"># ... (code for ANOVA results) ...</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">plot</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">olink_volcano_plot</span><span class="p">(</span><span class="n">results</span><span class="p">)</span><span class="w"> </span><span class="c1"># Create the plot using the results</span>
+<span class="w">    </span><span class="c1"># ... (code to display plot) ...</span>
+<span class="w">  </span><span class="p">})</span>
+<span class="p">}</span>
+</code></pre></div>
+<strong>Explanation:</strong> When you click "Generate Volcano Plot," the <code>observeEvent</code> triggers. If "T-test" is selected, <code>results &lt;- ttest_results()</code> <em>reads</em> the latest T-test results directly from the <code>ttest_results</code> whiteboard. The <code>olink_volcano_plot</code> then immediately uses these results to draw the graph. This shows how <code>reactiveVal</code>s effectively pass data around the application, allowing different parts to react and update automatically.</p>
+<h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
+<p>In this chapter, you've grasped the core concept of <strong>Reactive Programming</strong> in <code>ShinyOlink</code>:</p>
+<ul>
+<li>It's the mechanism that makes your app <strong>dynamic and responsive</strong>, automatically updating outputs when inputs change, much like a spreadsheet.</li>
+<li>You learned about two key components: <strong><code>reactiveVal</code></strong> (the "dynamic whiteboard" for storing changing data) and <strong><code>observeEvent</code></strong> (the "smart listener" that triggers code when specific actions occur).</li>
+<li>You saw how these work together to allow data to flow seamlessly through the application, enabling features like automatic variable updates after data ingestion and plot generation from fresh analysis results.</li>
+</ul>
+<p>Understanding reactivity is fundamental to truly grasping how <code>ShinyOlink</code> (and any Shiny application) functions. Now that you know how the app responds to your actions, let's look at how such an application is prepared for others to use, even outside of your own computer.</p>
+<p>Ready to see how <code>ShinyOlink</code> can be shared with the world? Let's move on to <a href="../chapter7/">Chapter 7: Automated Deployment Pipelines</a>!</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+  <div style="
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    font-size: 1.5em;
+    padding: 1em 2em;
+    border-top: 1px solid #000000;
+    color: #ffffff;
+    text-align: center;
+    background-color: #000000;
+  ">
+    <div style="flex: 1; text-align: left;">
+        © Jyotirmoy Das 2025 
+    </div>
+    <div style="flex: 1; text-align: center;">
+      <code style="font-size: 0.8em;">
+        3D1F C87F 8D52 BFD4 5A1D <br> 3C86 63F2 2E14 6A0A 6B98
+      </code>
+    </div>
+    <div style="flex: 1; text-align: right;">
+      Made with <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" style="color: #ffffff;">MkDocs</a>
+    </div>
+  </div>
+
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.expand", "navigation.sections", "navigation.top", "content.code.annotate", "content.tabs.link", "navigation.tabs", "search.suggest", "search.highlight", "toc.integrate", "content.action.edit", "content.code.copy", "versioning", "icons"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+        <script src="https://fonts.googleapis.com/css2?family=Fira+Code&amp;family=Inter:wght@400;600&amp;display=swap"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+      
+    
+  </body>
+</html>

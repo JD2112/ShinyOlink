@@ -1,0 +1,827 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A Shiny app for Olink data analysis">
+      
+      
+        <meta name="author" content="Jyotirmoy Das">
+      
+      
+        <link rel="canonical" href="https://jd2112.github.io/ShinyOlink/1.3/chapter7/">
+      
+      
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.17">
+    
+    
+      
+        <title>Chapter 7: Automated Deployment Pipelines - olinkWrapper</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CFira+Code:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"Fira Code"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../styles/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#chapter-7-automated-deployment-pipelines" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="olinkWrapper" class="md-header__button md-logo" aria-label="olinkWrapper" data-md-component="logo">
+      
+
+<a href="https://github.com/JD2112" target="_blank" style="display:flex; align-items:center; text-decoration:none;">
+  <img src="../images/JD_logo.png" alt="Logo" style="height:24px; margin-right:8px;">
+</a>
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            olinkWrapper
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Chapter 7: Automated Deployment Pipelines
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/JD2112/ShinyOlink" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../chapter1/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Manual
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../chapter2/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Olink Proteomics
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../chapter3/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Technical Background
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../chapter4/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  FAQs
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="olinkWrapper" class="md-nav__button md-logo" aria-label="olinkWrapper" data-md-component="logo">
+      
+
+<a href="https://github.com/JD2112" target="_blank" style="display:flex; align-items:center; text-decoration:none;">
+  <img src="../images/JD_logo.png" alt="Logo" style="height:24px; margin-right:8px;">
+</a>
+    </a>
+    olinkWrapper
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/JD2112/ShinyOlink" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+  
+  <li class="md-nav__item">
+    
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+    
+    
+    
+  </li>
+
+  
+  <li class="md-nav__item">
+    
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Manual
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+    
+    
+    
+  </li>
+
+  
+  <li class="md-nav__item">
+    
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Olink Proteomics
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+    
+    
+    
+  </li>
+
+  
+  <li class="md-nav__item">
+    
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Technical Background
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+    
+    
+    
+  </li>
+
+  
+  <li class="md-nav__item">
+    
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    FAQs
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+    
+    
+    
+  </li>
+
+
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/JD2112/ShinyOlink/edit/master/docs/chapter7.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="chapter-7-automated-deployment-pipelines">Chapter 7: Automated Deployment Pipelines<a class="headerlink" href="#chapter-7-automated-deployment-pipelines" title="Permanent link">&para;</a></h1>
+<p>Welcome back, <code>ShinyOlink</code> enthusiast! In <a href="chapter6.qmd">Chapter 6: Reactive Programming</a>, you learned how <code>ShinyOlink</code> uses "reactivity" to make different parts of the app automatically update and respond to your actions, creating a smooth and interactive experience. You now understand how the app works on your computer.</p>
+<p>But what happens when a developer makes a new improvement or fixes a bug in <code>ShinyOlink</code>? How do those changes get from their computer to the public website where everyone can use the updated version? Doing this manually for every change would be slow, prone to errors, and take a lot of effort!</p>
+<h2 id="what-are-automated-deployment-pipelines">What are "Automated Deployment Pipelines"?<a class="headerlink" href="#what-are-automated-deployment-pipelines" title="Permanent link">&para;</a></h2>
+<p>Imagine you run a factory that produces a popular product. Every time you have a new and improved version, you wouldn't want to manually gather all the parts, assemble them, test them, and then personally deliver each one to your customers. That would be chaotic! Instead, you'd want an <strong>automated factory line</strong> that takes your new design, builds it, checks its quality, and ships it out efficiently and reliably.</p>
+<p><strong>The main problem "Automated Deployment Pipelines" solve is this:</strong> How do we automatically take the latest changes to the <code>ShinyOlink</code> code, build a ready-to-use version of the application, test it, and then make it available for everyone to use online, all without tedious manual steps?</p>
+<p>In <code>ShinyOlink</code>, this "automated factory line" is called an <strong>Automated Deployment Pipeline</strong>. When a developer writes new code and saves it to the project's central storage (GitHub), this pipeline automatically kicks into action. It ensures that the <code>ShinyOlink</code> application is built into a self-contained package (a "Docker image") and then released to a web server for you to use. This makes updates faster, more reliable, and less prone to human error.</p>
+<p>Let's use a common scenario: A developer adds a new statistical analysis feature to <code>ShinyOlink</code>. Their goal is to make this new feature available on the public <code>ShinyOlink</code> website for users as quickly and smoothly as possible. The automated deployment pipeline handles everything after the developer finishes writing the code!</p>
+<h2 id="key-concepts-the-automated-factory-tools">Key Concepts: The Automated Factory Tools<a class="headerlink" href="#key-concepts-the-automated-factory-tools" title="Permanent link">&para;</a></h2>
+<p>Automated deployment pipelines rely on a few key tools and ideas to work their magic:</p>
+<h3 id="1-github-actions-the-automated-worker">1. GitHub Actions: The Automated Worker<a class="headerlink" href="#1-github-actions-the-automated-worker" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Concept</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: left;">Analogy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>GitHub Actions</strong></td>
+<td style="text-align: left;">A service provided by GitHub (where <code>ShinyOlink</code> code is stored) that allows you to automate tasks directly within your code repository. It's like having a <strong>robot worker</strong> that performs tasks for you.</td>
+<td style="text-align: left;">The robot on the assembly line.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Workflows</strong></td>
+<td style="text-align: left;">These are instructions (written in YAML files) that tell GitHub Actions what to do, and when to do it. They define the "assembly line" steps.</td>
+<td style="text-align: left;">The detailed instructions for the robot.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-docker-the-standardized-shipping-container">2. Docker: The Standardized Shipping Container<a class="headerlink" href="#2-docker-the-standardized-shipping-container" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Concept</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: left;">Analogy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Docker</strong></td>
+<td style="text-align: left;">A technology that allows you to package an application and all its necessary parts (code, libraries, settings) into a single, standardized unit called an <strong>image</strong>.</td>
+<td style="text-align: left;">A standardized shipping container.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Docker Image</strong></td>
+<td style="text-align: left;">A self-contained, lightweight, and executable package that has everything needed to run a piece of software. It's like a complete, pre-assembled product.</td>
+<td style="text-align: left;">The product, neatly packed in its container, ready to be shipped anywhere.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Dockerfile</strong></td>
+<td style="text-align: left;">A simple text file that contains instructions on how to build a Docker image (e.g., "start with R, then add these packages, then add the app code").</td>
+<td style="text-align: left;">The instruction manual for building the product inside the container.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3-docker-hub-the-warehouse">3. Docker Hub: The Warehouse<a class="headerlink" href="#3-docker-hub-the-warehouse" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Concept</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: left;">Analogy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Docker Hub</strong></td>
+<td style="text-align: left;">A cloud-based repository (like a big online storage) for Docker images.</td>
+<td style="text-align: left;">The warehouse where all the ready-to-ship products (Docker images) are stored.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="how-to-use-automated-deployment-pipelines-as-a-developer">How to Use Automated Deployment Pipelines (as a Developer)<a class="headerlink" href="#how-to-use-automated-deployment-pipelines-as-a-developer" title="Permanent link">&para;</a></h2>
+<p>For a developer working on <code>ShinyOlink</code>, using these pipelines is remarkably simple:</p>
+<ol>
+<li><strong>Write Code:</strong> The developer writes new R code for a feature or bug fix.</li>
+<li><strong>Save &amp; Push:</strong> They save their changes and "push" them to the <code>ShinyOlink</code> project on GitHub.</li>
+</ol>
+<p>That's it! Once the code is pushed to GitHub, the automated pipeline takes over. The developer doesn't need to manually run any commands to build the Docker image or deploy the app to the web. The GitHub Actions robots handle everything, making sure the latest <code>ShinyOlink</code> is always available online.</p>
+<h2 id="under-the-hood-the-automatic-journey">Under the Hood: The Automatic Journey<a class="headerlink" href="#under-the-hood-the-automatic-journey" title="Permanent link">&para;</a></h2>
+<p>Let's trace the journey of <code>ShinyOlink</code> from a developer's computer to the public website, step-by-step.</p>
+<h3 id="step-by-step-walkthrough">Step-by-Step Walkthrough<a class="headerlink" href="#step-by-step-walkthrough" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Developer Pushes Code:</strong> A <code>ShinyOlink</code> developer finishes their work and pushes new code changes to the <code>main</code> branch of the <code>ShinyOlink</code> project on GitHub.</li>
+<li>
+<p><strong>GitHub Actions Triggers:</strong> GitHub detects these new changes. Since the project has pre-defined "workflows" (our instructions for the robots), GitHub Actions automatically starts two separate pipelines:</p>
+<ul>
+<li><strong>Pipeline 1: Docker Image Build &amp; Push:</strong> This pipeline focuses on creating a new, updated Docker image for <code>ShinyOlink</code>. It tells Docker how to package the app and then sends it to Docker Hub.</li>
+<li><strong>Pipeline 2: ShinyApps.io Deployment:</strong> This pipeline takes the latest app code and deploys it directly to the ShinyApps.io platform, making it accessible as a public website.</li>
+</ul>
+</li>
+<li>
+<p><strong>Inside Pipeline 1 (Docker Build):</strong></p>
+<ul>
+<li>GitHub Actions checks out (gets a copy of) the latest <code>ShinyOlink</code> code.</li>
+<li>It reads the <code>Dockerfile</code> (the building instructions) and uses Docker to create a new, self-contained <code>ShinyOlink</code> image. This image includes R, all necessary R packages (like <code>OlinkAnalyze</code> from <a href="03_olinkanalyze_package_integration_.md">Chapter 3: OlinkAnalyze Package Integration</a>), and the <code>ShinyOlink</code> application code itself.</li>
+<li>Once the image is built, GitHub Actions logs into Docker Hub and "pushes" the newly built image to the <code>ShinyOlink</code> repository there, making it available in the "warehouse."</li>
+</ul>
+</li>
+<li>
+<p><strong>Inside Pipeline 2 (ShinyApps.io Deploy):</strong></p>
+<ul>
+<li>GitHub Actions again checks out the latest <code>ShinyOlink</code> code.</li>
+<li>It sets up R and installs all the specific R packages that <code>ShinyOlink</code> needs to run (like <code>shiny</code>, <code>rsconnect</code>, and many others).</li>
+<li>It then uses special credentials (secrets, kept safe on GitHub) to log into the <code>ShinyApps.io</code> deployment service.</li>
+<li>Finally, it instructs <code>ShinyApps.io</code> to deploy the <code>ShinyOlink</code> application using the latest code. This updates the public website with the new version.</li>
+</ul>
+</li>
+</ol>
+<p>This entire process, from code push to live application, happens automatically, saving a lot of time and effort!</p>
+<p>Here's a simple diagram to visualize this automated flow:</p>
+<pre class="mermaid"><code>sequenceDiagram
+    participant Developer
+    participant GitHub
+    participant GitHub Actions
+    participant Docker Hub
+    participant ShinyApps.io (Website)
+
+    Developer-&gt;&gt;GitHub: 1. Pushes new code
+    GitHub-&gt;&gt;GitHub Actions: 2. Triggers Docker Build Pipeline
+    GitHub Actions-&gt;&gt;GitHub Actions: 3. Checks out code
+    Note over GitHub Actions: Builds Docker Image (using Dockerfile)
+    GitHub Actions-&gt;&gt;Docker Hub: 4. Pushes new Docker Image
+    GitHub-&gt;&gt;GitHub Actions: 5. Also Triggers ShinyApps.io Deploy Pipeline
+    GitHub Actions-&gt;&gt;GitHub Actions: 6. Checks out code &amp; Installs R pkgs
+    Note over GitHub Actions: Connects to ShinyApps.io
+    GitHub Actions-&gt;&gt;ShinyApps.io (Website): 7. Deploys updated app
+    ShinyApps.io (Website)-&gt;&gt;User: User accesses latest ShinyOlink</code></pre>
+<h3 id="diving-into-the-code-the-workflow-files">Diving into the Code: The Workflow Files<a class="headerlink" href="#diving-into-the-code-the-workflow-files" title="Permanent link">&para;</a></h3>
+<p>The instructions for these automated pipelines are defined in special YAML files located in the <code>.github/workflows/</code> folder of the <code>ShinyOlink</code> project. Let's look at simplified parts of these files.</p>
+<h4 id="1-docker-image-build-workflow-githubworkflowsdocker-buildyml">1. Docker Image Build Workflow (<code>.github/workflows/docker-build.yml</code>)<a class="headerlink" href="#1-docker-image-build-workflow-githubworkflowsdocker-buildyml" title="Permanent link">&para;</a></h4>
+<p>This file tells GitHub Actions how to build and push the Docker image to Docker Hub:</p>
+<p><div class="highlight"><pre><span></span><code><span class="c1"># .github/workflows/docker-build.yml (Simplified)</span>
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker-image</span>
+
+<span class="nt">on</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">push</span><span class="p">:</span><span class="w"> </span><span class="c1"># This pipeline runs every time new code is pushed</span>
+
+<span class="nt">jobs</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">docker</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu-latest</span><span class="w"> </span><span class="c1"># Run this job on a standard Ubuntu machine</span>
+<span class="w">    </span><span class="nt">steps</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Checkout</span>
+<span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/checkout@v4</span><span class="w"> </span><span class="c1"># Get the latest code from GitHub</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Login to Docker Hub</span>
+<span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker/login-action@v3</span>
+<span class="w">        </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ secrets.DOCKERHUB_USERNAME }}</span>
+<span class="w">          </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ secrets.DOCKERHUB_TOKEN }}</span><span class="w"> </span><span class="c1"># Use secret credentials for login</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Build and push</span>
+<span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker/build-push-action@v6</span><span class="w"> </span><span class="c1"># This action builds and pushes the Docker image</span>
+<span class="w">        </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">context</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.</span><span class="w"> </span><span class="c1"># Look for the Dockerfile in the current folder</span>
+<span class="w">          </span><span class="nt">push</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"> </span><span class="c1"># Yes, push the image to Docker Hub</span>
+<span class="w">          </span><span class="nt">tags</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">            </span><span class="no">jd21/shinyolink:latest # Tag the image as &#39;latest&#39;</span>
+<span class="w">            </span><span class="no"># ... other tags like date-based versions ...</span>
+</code></pre></div>
+<strong>Explanation:</strong>
+*   <code>on: push:</code>: This is the trigger. It means this "job" will run automatically every time a developer pushes new code to <em>any</em> branch.
+*   <code>uses: actions/checkout@v4</code>: This step is like telling the robot to "get a copy of all the project files."
+*   <code>Login to Docker Hub</code>: This step uses secure "secrets" (which are configured in GitHub and not visible in the code) to log into Docker Hub.
+*   <code>Build and push</code>: This is the core step. It uses a special pre-made "action" (<code>docker/build-push-action</code>) to build the Docker image using the <code>Dockerfile</code> in the project and then push it to <code>jd21/shinyolink</code> on Docker Hub, labeling it as <code>latest</code>.</p>
+<h4 id="the-dockerfile-dockerfile">The Dockerfile (<code>Dockerfile</code>)<a class="headerlink" href="#the-dockerfile-dockerfile" title="Permanent link">&para;</a></h4>
+<p>This file contains the actual instructions for building the <code>ShinyOlink</code> Docker image:</p>
+<p><div class="highlight"><pre><span></span><code><span class="c"># Dockerfile (Simplified)</span>
+<span class="k">FROM</span><span class="w"> </span><span class="s">jd21/shinyolink:v1.2</span><span class="w"> </span><span class="c"># Start building from a specific base R image</span>
+
+<span class="k">USER</span><span class="w"> </span><span class="s">root</span>
+
+<span class="c"># Install system dependencies needed by R packages</span>
+<span class="k">RUN</span><span class="w"> </span>apt-get<span class="w"> </span>update<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>libcurl4-openssl-dev<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>#<span class="w"> </span>...<span class="w"> </span>more<span class="w"> </span>system<span class="w"> </span>libraries<span class="w"> </span>...
+
+<span class="c"># Install R packages needed for ShinyOlink</span>
+<span class="k">RUN</span><span class="w"> </span>R<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;\</span>
+<span class="s2">    install.packages(&#39;BiocManager&#39;, repos=&#39;https://cran.rstudio.com/&#39;); \</span>
+<span class="s2">    BiocManager::install(version = &#39;3.20&#39;); \</span>
+<span class="s2">    # ... many more R package installations ...</span>
+<span class="w">    </span><span class="s2">&quot;</span>
+
+<span class="c"># Create a folder inside the Docker image for the app</span>
+<span class="k">RUN</span><span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/srv/shiny-server/app_cache<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>chown<span class="w"> </span>-R<span class="w"> </span>shiny:shiny<span class="w"> </span>/srv/shiny-server/app_cache
+
+<span class="c"># Copy the ShinyOlink application files into the image</span>
+<span class="k">COPY</span><span class="w"> </span>app/<span class="w"> </span>/srv/shiny-server/
+
+<span class="c"># Tell the Docker image that the app will listen on port 3838</span>
+<span class="k">EXPOSE</span><span class="w"> </span><span class="s">3838</span>
+
+<span class="c"># When the Docker image runs, start the Shiny server</span>
+<span class="k">CMD</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;/usr/bin/shiny-server&quot;</span><span class="p">]</span>
+</code></pre></div>
+<strong>Explanation:</strong>
+*   <code>FROM jd21/shinyolink:v1.2</code>: This tells Docker to start building the image from an existing base image that already has R installed. It's like starting with a pre-built foundation.
+*   <code>RUN ...</code>: These lines execute commands inside the Docker image during its creation. They install necessary system libraries (like tools for handling secure internet connections) and then install all the R packages <code>ShinyOlink</code> depends on (like <code>shiny</code>, <code>OlinkAnalyze</code>, <code>clusterProfiler</code>, etc.).
+*   <code>COPY app/ /srv/shiny-server/</code>: This copies all the <code>ShinyOlink</code> application's R files (UI, server, modules, etc.) into the correct location within the Docker image.
+*   <code>EXPOSE 3838</code>: This tells the outside world that this Docker container will serve a web application on port 3838.
+*   <code>CMD ["/usr/bin/shiny-server"]</code>: This is the command that runs automatically when someone starts a container from this Docker image. It starts the Shiny server, which then runs <code>ShinyOlink</code>.</p>
+<h4 id="the-shinyappsio-deployment-workflow-githubworkflowsshinyapps_deployyml">The ShinyApps.io Deployment Workflow (<code>.github/workflows/shinyapps_deploy.yml</code>)<a class="headerlink" href="#the-shinyappsio-deployment-workflow-githubworkflowsshinyapps_deployyml" title="Permanent link">&para;</a></h4>
+<p>This file specifies how <code>ShinyOlink</code> is deployed to the public ShinyApps.io platform:</p>
+<p><div class="highlight"><pre><span></span><code><span class="c1"># .github/workflows/shinyapps_deploy.yml (Simplified)</span>
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">shinyapps-deployment</span>
+<span class="nt">on</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">push</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">branches</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">main</span><span class="w"> </span><span class="c1"># This pipeline only runs when code is pushed to the &#39;main&#39; branch</span>
+
+<span class="nt">jobs</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">test</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">shinyio deployment</span>
+<span class="w">      </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu-latest</span><span class="w"> </span><span class="c1"># Run on a standard Ubuntu machine</span>
+<span class="w">      </span><span class="nt">steps</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">r-lib/actions/setup-r@v2-branch</span><span class="w"> </span><span class="c1"># Set up R environment</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Install rsconnect</span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">          </span><span class="no">R -e &#39;install.packages(&quot;rsconnect&quot;)&#39; # Install the package to deploy to ShinyApps.io</span>
+<span class="w">          </span><span class="no"># ... install other ShinyOlink runtime packages ...</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/checkout@v4</span><span class="w"> </span><span class="c1"># Get the latest code</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Connect shiny server</span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Rscript -e &quot;rsconnect::setAccountInfo(name=${{ secrets.SHINYIO_NAME }}, token=${{ secrets.SHINYIO_TOKEN }}, secret=${{ secrets.SHINYIO_SECRET }})&quot;</span><span class="w"> </span><span class="c1"># Use secrets to log in</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deploy app</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Rscript -e &quot;rsconnect::deployApp(appName = &#39;ShinyOlink&#39;)&quot;</span><span class="w"> </span><span class="c1"># Deploy the app!</span>
+</code></pre></div>
+<strong>Explanation:</strong>
+*   <code>on: push: branches: - main</code>: This pipeline specifically triggers only when code is pushed to the <code>main</code> branch, ensuring only tested and approved changes go to the live website.
+*   <code>setup-r@v2-branch</code>: This step sets up a working R environment for the deployment.
+*   <code>Install rsconnect</code>: This installs <code>rsconnect</code>, which is the R package specifically designed for deploying Shiny applications to ShinyApps.io. It also installs other packages <code>ShinyOlink</code> needs to run.
+*   <code>Connect shiny server</code>: This uses secret credentials to connect to the ShinyApps.io account.
+*   <code>deploy app</code>: This is the crucial command that tells <code>rsconnect</code> to take all the <code>ShinyOlink</code> app files and deploy them to the "ShinyOlink" application on the ShinyApps.io server. If an app with that name already exists, it will update it; otherwise, it will create a new one.</p>
+<p>These workflow files are <code>ShinyOlink</code>'s "robot instructions." They ensure that every time a developer makes a change to the <code>main</code> branch, a new, updated version of <code>ShinyOlink</code> is built and deployed automatically, making it available for everyone to use with confidence.</p>
+<h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
+<p>In this chapter, you've gained an understanding of <strong>Automated Deployment Pipelines</strong> in the context of <code>ShinyOlink</code>:</p>
+<ul>
+<li>You learned that pipelines are like an <strong>automated factory line</strong> that takes code changes and automatically builds, tests (conceptually, though testing steps are simplified here), and deploys the application.</li>
+<li>You explored key tools: <strong>GitHub Actions</strong> (the robot worker), <strong>Docker</strong> (the standardized shipping container), and <strong>Docker Hub</strong> (the warehouse).</li>
+<li>You saw how <code>ShinyOlink</code> uses two main pipelines: one for building and pushing a Docker image, and another for deploying the application to <code>ShinyApps.io</code>.</li>
+<li>You got a simplified look at the YAML workflow files and the <code>Dockerfile</code> that orchestrate this automatic process.</li>
+</ul>
+<p>This automated approach ensures that <code>ShinyOlink</code> updates are delivered quickly, reliably, and consistently, letting developers focus on new features and you, the user, always get the latest version.</p>
+<p>Now that you understand how <code>ShinyOlink</code> is built and delivered, let's explore how the project is managed and how you can contribute to its future.</p>
+<p>Ready to be part of the <code>ShinyOlink</code> community? Let's move on to <a href="../chapter8/">Chapter 8: Project Governance &amp; Contributions</a>!</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+  <div style="
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    font-size: 1.5em;
+    padding: 1em 2em;
+    border-top: 1px solid #000000;
+    color: #ffffff;
+    text-align: center;
+    background-color: #000000;
+  ">
+    <div style="flex: 1; text-align: left;">
+        © Jyotirmoy Das 2025 
+    </div>
+    <div style="flex: 1; text-align: center;">
+      <code style="font-size: 0.8em;">
+        3D1F C87F 8D52 BFD4 5A1D <br> 3C86 63F2 2E14 6A0A 6B98
+      </code>
+    </div>
+    <div style="flex: 1; text-align: right;">
+      Made with <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" style="color: #ffffff;">MkDocs</a>
+    </div>
+  </div>
+
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.expand", "navigation.sections", "navigation.top", "content.code.annotate", "content.tabs.link", "navigation.tabs", "search.suggest", "search.highlight", "toc.integrate", "content.action.edit", "content.code.copy", "versioning", "icons"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+        <script src="https://fonts.googleapis.com/css2?family=Fira+Code&amp;family=Inter:wght@400;600&amp;display=swap"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,745 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A Shiny app for Olink data analysis">
+      
+      
+        <meta name="author" content="Jyotirmoy Das">
+      
+      
+        <link rel="canonical" href="https://jd2112.github.io/ShinyOlink/1.3/chapter5/">
+      
+      
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.17">
+    
+    
+      
+        <title>Chapter 5: Module-Based Development - olinkWrapper</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CFira+Code:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"Fira Code"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../styles/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#chapter-5-module-based-development" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="olinkWrapper" class="md-header__button md-logo" aria-label="olinkWrapper" data-md-component="logo">
+      
+
+<a href="https://github.com/JD2112" target="_blank" style="display:flex; align-items:center; text-decoration:none;">
+  <img src="../images/JD_logo.png" alt="Logo" style="height:24px; margin-right:8px;">
+</a>
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            olinkWrapper
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Chapter 5: Module-Based Development
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/JD2112/ShinyOlink" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../chapter1/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Manual
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../chapter2/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Olink Proteomics
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../chapter3/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Technical Background
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../chapter4/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  FAQs
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="olinkWrapper" class="md-nav__button md-logo" aria-label="olinkWrapper" data-md-component="logo">
+      
+
+<a href="https://github.com/JD2112" target="_blank" style="display:flex; align-items:center; text-decoration:none;">
+  <img src="../images/JD_logo.png" alt="Logo" style="height:24px; margin-right:8px;">
+</a>
+    </a>
+    olinkWrapper
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/JD2112/ShinyOlink" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+  
+  <li class="md-nav__item">
+    
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+    
+    
+    
+  </li>
+
+  
+  <li class="md-nav__item">
+    
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Manual
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+    
+    
+    
+  </li>
+
+  
+  <li class="md-nav__item">
+    
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Olink Proteomics
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+    
+    
+    
+  </li>
+
+  
+  <li class="md-nav__item">
+    
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Technical Background
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+    
+    
+    
+  </li>
+
+  
+  <li class="md-nav__item">
+    
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    FAQs
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+    
+    
+    
+  </li>
+
+
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/JD2112/ShinyOlink/edit/master/docs/chapter5.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="chapter-5-module-based-development">Chapter 5: Module-Based Development<a class="headerlink" href="#chapter-5-module-based-development" title="Permanent link">&para;</a></h1>
+<p>Welcome back, <code>ShinyOlink</code> enthusiast! In <a href="../chapter4/">Chapter 4: Shiny Application Structure</a>, we learned that every Shiny app has a User Interface (UI) and Server logic, and how <code>app.R</code> brings them together. You also saw that <code>ShinyOlink</code> is a big app, and its UI and Server code are split into many files like <code>ui_main.R</code> and <code>server_main.R</code>.</p>
+<p>While splitting code into files is a good start, for very large applications like <code>ShinyOlink</code> with many features, even splitting can become messy. Imagine trying to manage dozens of separate UI and server files and making sure they all play nicely together!</p>
+<h2 id="what-is-module-based-development">What is "Module-Based Development"?<a class="headerlink" href="#what-is-module-based-development" title="Permanent link">&para;</a></h2>
+<p>Think of building with LEGO bricks. You don't just get a giant pile of plastic and start melting it together. Instead, you get pre-made bricks of different shapes and sizes – a window brick, a door brick, a wall brick. Each brick is a self-contained unit that does one job. You can build a small house or a huge castle by simply snapping these bricks together.</p>
+<p><strong>The main problem "Module-Based Development" solves is this:</strong> How do we organize a complex Shiny application, with many different features (like T-tests, ANOVA, PCA, etc.), so that the code is easy to understand, maintain, and reuse?</p>
+<p>In <code>ShinyOlink</code>, instead of putting all the code for, say, the T-test feature directly into <code>ui_main.R</code> and <code>server_main.R</code>, we package it up as a "module." This module has its own UI part and its own server part, specifically designed to handle everything related to T-tests.</p>
+<p>Let's use our T-test feature as an example: The goal is to compare protein levels between two groups and display the results and a Volcano Plot. With modules, we treat this entire feature – its buttons, tables, plots, and the logic that makes them work – as one independent, reusable "brick."</p>
+<h2 id="key-concepts-your-reusable-lego-bricks">Key Concepts: Your Reusable LEGO Bricks<a class="headerlink" href="#key-concepts-your-reusable-lego-bricks" title="Permanent link">&para;</a></h2>
+<p>A Shiny "module" is essentially a pair of functions: one for the UI and one for the server logic. They work together to create a self-contained, reusable piece of your application.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Concept</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: left;">Analogy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Module UI Function</strong></td>
+<td style="text-align: left;">Defines the user interface (buttons, inputs, outputs) for <em>just that specific feature</em>.</td>
+<td style="text-align: left;">A specialized LEGO brick, like a pre-assembled window.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Module Server Function</strong></td>
+<td style="text-align: left;">Contains the logic that reacts to inputs and generates outputs for <em>just that specific feature</em>.</td>
+<td style="text-align: left;">The internal mechanism that makes the LEGO window open and close.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Encapsulation</strong></td>
+<td style="text-align: left;">Each module keeps its code and internal workings separate from other modules.</td>
+<td style="text-align: left;">Each LEGO brick works independently, without interfering with others.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Reusability</strong></td>
+<td style="text-align: left;">You can use the same module multiple times in different parts of your app, or even in different apps!</td>
+<td style="text-align: left;">You can use the same window brick in many houses or castles.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="how-to-use-modules-in-shinyolink">How to Use Modules in <code>ShinyOlink</code><a class="headerlink" href="#how-to-use-modules-in-shinyolink" title="Permanent link">&para;</a></h2>
+<p><code>ShinyOlink</code> is built almost entirely using modules. Each major analysis or visualization feature (like ANOVA, PCA, T-Test, Volcano Plot) has its own dedicated pair of UI and server module files.</p>
+<p>When you interact with <code>ShinyOlink</code>:</p>
+<ol>
+<li>The <strong>main UI (<code>ui_main.R</code>)</strong> calls the UI functions of various modules to build the overall layout. For example, it calls <code>ttest_ui()</code> to put the T-Test controls on the screen.</li>
+<li>The <strong>main Server (<code>server_main.R</code>)</strong> calls the server functions of these modules to activate their specific logic. For example, it calls <code>ttest_server()</code> to handle what happens when you click the "Run T-Test" button.</li>
+</ol>
+<p>Let's revisit our T-test example. To make the T-test feature available, <code>ShinyOlink</code> does not just add elements directly to <code>ui_main.R</code> and <code>server_main.R</code>. Instead, it includes the T-test module's UI and server functions.</p>
+<h3 id="example-the-t-test-module">Example: The T-Test Module<a class="headerlink" href="#example-the-t-test-module" title="Permanent link">&para;</a></h3>
+<p>Recall from <a href="02_statistical_analysis___visualization_modules_.md">Chapter 2: Statistical Analysis &amp; Visualization Modules</a> that we have a file called <code>app/ui/ui_ttest.R</code> and another called <code>app/server/server_ttest.R</code>. These files define the T-Test module.</p>
+<p>Here's a simplified look at the <code>ttest_ui</code> function:</p>
+<p><div class="highlight"><pre><span></span><code><span class="c1"># app/ui/ui_ttest.R (Simplified T-Test Module UI)</span>
+<span class="n">ttest_ui</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="kr">function</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nf">tagList</span><span class="p">(</span><span class="w"> </span><span class="c1"># tagList helps organize multiple UI elements</span>
+<span class="w">    </span><span class="nf">selectInput</span><span class="p">(</span><span class="s">&quot;ttest_var&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Grouping Variable&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">choices</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NULL</span><span class="p">),</span>
+<span class="w">    </span><span class="nf">radioButtons</span><span class="p">(</span><span class="s">&quot;ttest_var_type&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Variable Type&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">choices</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Character&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Factor&quot;</span><span class="p">)),</span>
+<span class="w">    </span><span class="nf">actionButton</span><span class="p">(</span><span class="s">&quot;run_ttest&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Run T-Test&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">class</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;btn-primary&quot;</span><span class="p">),</span>
+<span class="w">    </span><span class="nf">DTOutput</span><span class="p">(</span><span class="s">&quot;ttest_output&quot;</span><span class="p">),</span><span class="w"> </span><span class="c1"># Output for the results table</span>
+<span class="w">    </span><span class="nf">downloadButton</span><span class="p">(</span><span class="s">&quot;download_ttest&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Download Results&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+<strong>Explanation:</strong> This <code>ttest_ui</code> function is the <strong>Module UI function</strong>. It defines all the dropdowns, buttons, and places where outputs (like the table) will appear, <em>specifically</em> for the T-test feature. When the main application wants to show the T-test section, it simply "calls" this function, and all these elements show up.</p>
+<p>And here's a simplified look at the <code>ttest_server</code> function:</p>
+<p><div class="highlight"><pre><span></span><code><span class="c1"># app/server/server_ttest.R (Simplified T-Test Module Server)</span>
+<span class="n">ttest_server</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="kr">function</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="n">output</span><span class="p">,</span><span class="w"> </span><span class="n">session</span><span class="p">,</span><span class="w"> </span><span class="n">merged_data</span><span class="p">,</span><span class="w"> </span><span class="n">ttest_results</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nf">observeEvent</span><span class="p">(</span><span class="n">input</span><span class="o">$</span><span class="n">run_ttest</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nf">req</span><span class="p">(</span><span class="nf">merged_data</span><span class="p">(),</span><span class="w"> </span><span class="n">input</span><span class="o">$</span><span class="n">ttest_var</span><span class="p">)</span>
+<span class="w">    </span><span class="n">data_for_test</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">merged_data</span><span class="p">()</span>
+<span class="w">    </span><span class="c1"># ... (code to prepare data and call olink_ttest) ...</span>
+<span class="w">    </span><span class="n">results</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">olink_ttest</span><span class="p">(</span><span class="n">data_for_test</span><span class="p">,</span><span class="w"> </span><span class="n">variable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">input</span><span class="o">$</span><span class="n">ttest_var</span><span class="p">)</span>
+<span class="w">    </span><span class="nf">ttest_results</span><span class="p">(</span><span class="n">results</span><span class="p">)</span><span class="w"> </span><span class="c1"># Store results for other modules</span>
+<span class="w">    </span><span class="n">output</span><span class="o">$</span><span class="n">ttest_output</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">renderDT</span><span class="p">({</span>
+<span class="w">      </span><span class="nf">datatable</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+<span class="w">    </span><span class="p">})</span>
+<span class="w">  </span><span class="p">})</span>
+<span class="w">  </span><span class="c1"># ... (code for downloading results) ...</span>
+<span class="p">}</span>
+</code></pre></div>
+<strong>Explanation:</strong> This <code>ttest_server</code> function is the <strong>Module Server function</strong>. It contains all the "brain" logic for the T-test. It listens for the <code>run_ttest</code> button click, gets the <code>merged_data</code> (our input), runs the <code>olink_ttest</code> function (from <a href="03_olinkanalyze_package_integration_.md">Chapter 3: OlinkAnalyze Package Integration</a>), and then updates <code>ttest_results</code> and <code>output$ttest_output</code> (our outputs). Notice how it also takes <code>merged_data</code> and <code>ttest_results</code> as inputs – this is how modules can share information!</p>
+<h2 id="under-the-hood-plugging-in-the-lego-bricks">Under the Hood: Plugging in the LEGO Bricks<a class="headerlink" href="#under-the-hood-plugging-in-the-lego-bricks" title="Permanent link">&para;</a></h2>
+<p>Let's see how these <code>ttest_ui</code> and <code>ttest_server</code> "LEGO bricks" are plugged into the main <code>ShinyOlink</code> application.</p>
+<h3 id="step-by-step-walkthrough">Step-by-Step Walkthrough<a class="headerlink" href="#step-by-step-walkthrough" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Main UI Calls Module UI:</strong> When <code>ShinyOlink</code> starts, its main UI definition (in <code>app/ui/ui_main.R</code>) includes a line that calls the <code>ttest_ui()</code> function. This tells Shiny to draw all the T-Test specific buttons and inputs on the screen.</li>
+<li><strong>Main Server Calls Module Server:</strong> Similarly, the main server logic (in <code>app/server/server_main.R</code>) includes a line that calls the <code>ttest_server()</code> function. This activates the T-Test module's brain, making it ready to listen for clicks and perform calculations.</li>
+<li><strong>Data Flow:</strong> When the <code>ttest_server()</code> is called, it's given access to important shared data, like <code>merged_data</code> (our combined Olink dataset from <a href="01_data_ingestion___preparation_.md">Chapter 1: Data Ingestion &amp; Preparation</a>) and a place to store its results, like <code>ttest_results</code>. This allows the module to work with the data and pass its outcomes to other parts of the app (like the Volcano Plot module).</li>
+</ol>
+<p>Here's a simple diagram to visualize this process:</p>
+<pre class="mermaid"><code>sequenceDiagram
+    participant Shiny App (UI)
+    participant Shiny App (Server)
+    participant ui_main.R
+    participant server_main.R
+    participant T-Test UI Module
+    participant T-Test Server Module
+
+    Shiny App (UI)-&gt;&gt;ui_main.R: App starts, builds overall UI
+    ui_main.R-&gt;&gt;T-Test UI Module: Calls ttest_ui() to get T-Test controls
+    T-Test UI Module--&gt;&gt;ui_main.R: Returns T-Test UI elements
+    ui_main.R--&gt;&gt;Shiny App (UI): T-Test controls displayed
+
+    Shiny App (Server)-&gt;&gt;server_main.R: App starts, activates overall server logic
+    server_main.R-&gt;&gt;T-Test Server Module: Calls ttest_server() with shared data (merged_data, ttest_results)
+    Note over T-Test Server Module: T-Test module is now active and listening for user input
+    User-&gt;&gt;Shiny App (UI): Clicks "Run T-Test"
+    Shiny App (UI)-&gt;&gt;Shiny App (Server): Sends input$run_ttest signal
+    Shiny App (Server)-&gt;&gt;T-Test Server Module: Forwards signal
+    T-Test Server Module--&gt;&gt;T-Test Server Module: Performs calculations using merged_data
+    T-Test Server Module--&gt;&gt;T-Test Server Module: Stores results in ttest_results
+    T-Test Server Module--&gt;&gt;Shiny App (Server): Sends output for display
+    Shiny App (Server)--&gt;&gt;Shiny App (UI): Displays T-Test results table</code></pre>
+<h3 id="diving-into-the-code-the-plug-in-lines">Diving into the Code: The "Plug-in" Lines<a class="headerlink" href="#diving-into-the-code-the-plug-in-lines" title="Permanent link">&para;</a></h3>
+<p>The key to module-based development in <code>ShinyOlink</code> lies in <code>app/ui/ui_main.R</code> and <code>app/server/server_main.R</code>, where these modules are called.</p>
+<h4 id="calling-module-ui-in-appuiui_mainr">Calling Module UI in <code>app/ui/ui_main.R</code><a class="headerlink" href="#calling-module-ui-in-appuiui_mainr" title="Permanent link">&para;</a></h4>
+<p>To include the T-Test UI in the application, <code>ui_main.R</code> first needs to know where <code>ttest_ui.R</code> is, and then it calls the function.</p>
+<p><div class="highlight"><pre><span></span><code><span class="c1"># app/ui/ui_main.R (Simplified for calling T-Test UI)</span>
+<span class="c1"># ... other library and source calls ...</span>
+<span class="nf">source</span><span class="p">(</span><span class="s">&quot;ui/ui_ttest.R&quot;</span><span class="p">)</span><span class="w"> </span><span class="c1"># This line tells R where to find the ttest_ui function</span>
+
+<span class="n">single_ui</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="kr">function</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nf">page_sidebar</span><span class="p">(</span>
+<span class="w">    </span><span class="c1"># ... general app layout ...</span>
+<span class="w">    </span><span class="nf">navset_tab</span><span class="p">(</span>
+<span class="w">      </span><span class="nf">nav_panel</span><span class="p">(</span><span class="s">&quot;C. Statistical Analysis&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nf">navset_pill</span><span class="p">(</span>
+<span class="w">          </span><span class="nf">nav_panel</span><span class="p">(</span><span class="s">&quot;2. T-Test&quot;</span><span class="p">,</span><span class="w"> </span><span class="nf">ttest_ui</span><span class="p">())</span><span class="w"> </span><span class="c1"># This line *calls* the T-Test UI module!</span>
+<span class="w">        </span><span class="p">)</span>
+<span class="w">      </span><span class="p">)</span>
+<span class="w">      </span><span class="c1"># ... other nav_panels ...</span>
+<span class="w">    </span><span class="p">)</span>
+<span class="w">    </span><span class="c1"># ... footer content ...</span>
+<span class="w">  </span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+<strong>Explanation:</strong> The <code>source("ui/ui_ttest.R")</code> line loads the code from the <code>ui_ttest.R</code> file, making the <code>ttest_ui</code> function available. Then, <code>nav_panel("2. T-Test", ttest_ui())</code> is where the <code>ttest_ui</code> function is called. When <code>ShinyOlink</code> builds its interface, it executes <code>ttest_ui()</code>, and all the UI elements defined in that module function are added to the "T-Test" tab.</p>
+<h4 id="calling-module-server-in-appserverserver_mainr">Calling Module Server in <code>app/server/server_main.R</code><a class="headerlink" href="#calling-module-server-in-appserverserver_mainr" title="Permanent link">&para;</a></h4>
+<p>The server side works similarly. The <code>server_main.R</code> file first sources all the individual server module files and then calls their functions.</p>
+<p><div class="highlight"><pre><span></span><code><span class="c1"># app/server/server_main.R (Simplified for calling T-Test Server)</span>
+<span class="c1"># ... many lines sourcing other server module files ...</span>
+<span class="nf">source</span><span class="p">(</span><span class="nf">file.path</span><span class="p">(</span><span class="s">&quot;server&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;server_ttest.R&quot;</span><span class="p">))</span><span class="w"> </span><span class="c1"># This line loads the ttest_server function</span>
+<span class="c1"># ... more source calls ...</span>
+
+<span class="n">server_main</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="kr">function</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="n">output</span><span class="p">,</span><span class="w"> </span><span class="n">session</span><span class="p">,</span><span class="w"> </span><span class="n">merged_data</span><span class="p">,</span><span class="w"> </span><span class="n">var_key_merged</span><span class="p">,</span><span class="w"> </span><span class="n">ttest_results</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1"># ... other reactive values ...</span>
+
+<span class="w">  </span><span class="c1"># This line *calls* the T-Test Server module!</span>
+<span class="w">  </span><span class="nf">safe_call</span><span class="p">(</span><span class="n">ttest_server</span><span class="p">,</span><span class="w"> </span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="n">output</span><span class="p">,</span><span class="w"> </span><span class="n">session</span><span class="p">,</span><span class="w"> </span><span class="n">merged_data</span><span class="p">,</span><span class="w"> </span><span class="n">ttest_results</span><span class="p">)</span>
+
+<span class="w">  </span><span class="c1"># ... calls to many more server modules ...</span>
+<span class="p">}</span>
+</code></pre></div>
+<strong>Explanation:</strong>
+*   <code>source(file.path("server", "server_ttest.R"))</code> loads the <code>ttest_server</code> function.
+*   <code>safe_call(ttest_server, input, output, session, merged_data, ttest_results)</code> is the crucial line. This calls the <code>ttest_server</code> function. It passes <code>input</code>, <code>output</code>, and <code>session</code> (standard Shiny variables) along with <code>merged_data</code> (the main dataset shared across the app) and <code>ttest_results</code> (a reactive value where the T-test results will be stored and can be accessed by other modules, like the Volcano Plot). The <code>safe_call</code> function is a helper used in <code>ShinyOlink</code> to ensure robustness, but conceptually, it's just calling <code>ttest_server(...)</code>.</p>
+<p>This modular approach makes <code>ShinyOlink</code> much more manageable. If there's an issue with the T-test calculations, developers know exactly which files (<code>ui_ttest.R</code> and <code>server_ttest.R</code>) to look at, without affecting other parts of the application. It also makes it easy to add new features later – just create a new module pair and plug it in!</p>
+<h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
+<p>In this chapter, you've learned about the power of <strong>Module-Based Development</strong> in <code>ShinyOlink</code>:</p>
+<ul>
+<li>It helps organize complex Shiny applications by breaking them into smaller, self-contained <strong>"LEGO bricks"</strong> (UI function + Server function pairs).</li>
+<li>Each module is responsible for a specific feature, making the code easier to <strong>understand, maintain, and reuse</strong>.</li>
+<li>You saw how <code>ShinyOlink</code> uses this approach, with <code>ui_main.R</code> calling module UI functions and <code>server_main.R</code> activating module server functions, passing shared data between them.</li>
+</ul>
+<p>This modular structure is a cornerstone of building robust and scalable Shiny applications. It also sets the stage for understanding how data flows and changes within the app, which is handled by a concept called "Reactive Programming."</p>
+<p>Ready to understand how these modules dynamically respond to your actions? Let's move on to <a href="../chapter6/">Chapter 6: Reactive Programming</a>!</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+  <div style="
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    font-size: 1.5em;
+    padding: 1em 2em;
+    border-top: 1px solid #000000;
+    color: #ffffff;
+    text-align: center;
+    background-color: #000000;
+  ">
+    <div style="flex: 1; text-align: left;">
+        © Jyotirmoy Das 2025 
+    </div>
+    <div style="flex: 1; text-align: center;">
+      <code style="font-size: 0.8em;">
+        3D1F C87F 8D52 BFD4 5A1D <br> 3C86 63F2 2E14 6A0A 6B98
+      </code>
+    </div>
+    <div style="flex: 1; text-align: right;">
+      Made with <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" style="color: #ffffff;">MkDocs</a>
+    </div>
+  </div>
+
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.expand", "navigation.sections", "navigation.top", "content.code.annotate", "content.tabs.link", "navigation.tabs", "search.suggest", "search.highlight", "toc.integrate", "content.action.edit", "content.code.copy", "versioning", "icons"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+        <script src="https://fonts.googleapis.com/css2?family=Fira+Code&amp;family=Inter:wght@400;600&amp;display=swap"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+      
+    
+  </body>
+</html>

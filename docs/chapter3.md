@@ -1,9 +1,9 @@
 # 3. A Note on the App's Technical Stack
-The Olink Wrapper App is built with a powerful combination of open-source and modern technologies to ensure it is both interactive and reproducible.
+The OlinkWrapper App is built with a powerful combination of open-source and modern technologies to ensure it is both interactive and reproducible.
 
 ## 3.1 Shiny
 
-**Shiny** is an open-source R package that provides a robust framework for building interactive web applications using R. It allows researchers and data scientists to create powerful applications with a live backend powered by R's analytical capabilities, without needing extensive web development knowledge. The app's user interface, plots, and statistical computations are all handled by the Shiny framework.
+**Shiny** is an open-source **R package** that provides a robust framework for building interactive web applications using R. It allows researchers and data scientists to create powerful applications with a live backend powered by R's analytical capabilities, without needing extensive web development knowledge. The app's user interface, plots, and statistical computations are all handled by the Shiny framework.
 
 ## 3.2 R Packages
 
