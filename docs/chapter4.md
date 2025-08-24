@@ -1,4 +1,3 @@
-
 # Frequently Asked Questions (FAQ)
 
 ??? question "What should I do if the app looks frozen during analysis?"

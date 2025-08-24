@@ -30,13 +30,10 @@ flowchart TD
 
 ## Chapters
 
-1. [Data Ingestion & Preparation](chapter1.md)
-2. [Statistical Analysis & Visualization Modules](chapter2.md)
-3. [OlinkAnalyze Package Integration](chapter3.md)
-4. [Shiny Application Structure](chapter4.md)
-5. [Module-Based Development](chapter5.md)
-6. [Reactive Programming](chapter6.md)
-7. [Automated Deployment Pipelines](chapter7.md)
-8. [Project Governance & Contributions](chapter8.md)
+1. [Manual](chapter1.md)
+2. [Olink Proteomics](chapter2.md)
+3. [Shiny,R and Docker](chapter3.md)
+4. [FAQs](chapter4.md)
+
 
 ---
