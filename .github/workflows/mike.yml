@@ -45,8 +45,12 @@ jobs:
           ALIAS="latest"
           echo "Deploying version $VERSION"
 
+          # Make sure we are at the repo root
+          cd $GITHUB_WORKSPACE
+
           # Build versioned docs on gh-pages branch
           mike deploy --update-aliases "$VERSION" "$ALIAS"
+          mike set-default "$ALIAS"
 
           # Force push updated gh-pages
           git add -A
