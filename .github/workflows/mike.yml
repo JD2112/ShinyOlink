@@ -45,20 +45,9 @@ jobs:
           ALIAS="latest"
           echo "Deploying version $VERSION"
 
-          # Make sure we are at the repo root
+          # Ensure we are in repo root (where mkdocs.yml lives)
           cd $GITHUB_WORKSPACE
 
-          # Build versioned docs on gh-pages branch
-          mike deploy --update-aliases "$VERSION" "$ALIAS"
-          mike set-default "$ALIAS"
-
-          # Force push updated gh-pages
-          git add -A
-          git commit -m "Deploy docs version $VERSION [skip ci]" || echo "Nothing to commit"
-          git push origin gh-pages --force-with-lease
-
-          # Update 'latest' alias if needed
-          mike set-default "$ALIAS"
-          git add -A
-          git commit -m "Update latest alias to $ALIAS [skip ci]" || echo "Nothing to commit"
-          git push origin gh-pages --force-with-lease
+          # Deploy versioned docs
+          mike deploy --push --update-aliases "$VERSION" "$ALIAS"
+          mike set-default --push "$ALIAS"
