@@ -13,9 +13,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout source
+      # Checkout the main branch (mkdocs.yml must exist here)
+      - name: Checkout main branch
         uses: actions/checkout@v4
         with:
+          ref: main
           fetch-depth: 0
 
       - name: Set up Python
@@ -32,13 +34,6 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      # --- Fetch gh-pages and switch to it ---
-      - name: Fetch and checkout gh-pages
-        run: |
-          git fetch origin gh-pages:gh-pages
-          git checkout gh-pages
-
-      # --- Deploy docs using mike ---
       - name: Deploy with mike
         run: |
           VERSION=${GITHUB_REF#refs/tags/}
@@ -48,6 +43,6 @@ jobs:
           # Ensure we are in repo root (where mkdocs.yml lives)
           cd $GITHUB_WORKSPACE
 
-          # Deploy versioned docs
+          # Deploy versioned docs (mike handles gh-pages internally)
           mike deploy --push --update-aliases "$VERSION" "$ALIAS"
           mike set-default --push "$ALIAS"
