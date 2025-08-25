@@ -3,7 +3,10 @@ name: Deploy MkDocs with mike
 on:
   push:
     tags:
-      - "*"   # Run only when a tag is pushed
+      - "*"
+
+permissions:
+  contents: write
 
 jobs:
   deploy:
@@ -12,6 +15,8 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -27,10 +32,29 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
+      # --- Fetch gh-pages and switch to it ---
+      - name: Fetch and checkout gh-pages
+        run: |
+          git fetch origin gh-pages:gh-pages
+          git checkout gh-pages
+
+      # --- Deploy docs using mike ---
       - name: Deploy with mike
         run: |
-          VERSION=${GITHUB_REF#refs/tags/}   # Extracts the tag name (e.g. v1.3)
+          VERSION=${GITHUB_REF#refs/tags/}
           ALIAS="latest"
           echo "Deploying version $VERSION"
-          mike deploy --push --update-aliases "$VERSION" "$ALIAS"
-          mike set-default --push "$ALIAS"
+
+          # Build versioned docs on gh-pages branch
+          mike deploy --update-aliases "$VERSION" "$ALIAS"
+
+          # Force push updated gh-pages
+          git add -A
+          git commit -m "Deploy docs version $VERSION [skip ci]" || echo "Nothing to commit"
+          git push origin gh-pages --force-with-lease
+
+          # Update 'latest' alias if needed
+          mike set-default "$ALIAS"
+          git add -A
+          git commit -m "Update latest alias to $ALIAS [skip ci]" || echo "Nothing to commit"
+          git push origin gh-pages --force-with-lease
