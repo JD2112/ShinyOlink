@@ -1,0 +1,36 @@
+name: Deploy MkDocs with mike
+
+on:
+  push:
+    tags:
+      - "*"   # Run only when a tag is pushed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install dependencies
+        run: |
+          pip install mkdocs mike mkdocs-material
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Deploy with mike
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}   # Extracts the tag name (e.g. v1.3)
+          ALIAS="latest"
+          echo "Deploying version $VERSION"
+          mike deploy --push --update-aliases "$VERSION" "$ALIAS"
+          mike set-default --push "$ALIAS"
